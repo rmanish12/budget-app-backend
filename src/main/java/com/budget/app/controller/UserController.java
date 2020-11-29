@@ -1,8 +1,11 @@
 package com.budget.app.controller;
 
 import com.budget.app.entity.User;
+import com.budget.app.exceptions.IncorrectDetailsException;
+import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.jwt.service.JwtService;
 import com.budget.app.model.Response;
+import com.budget.app.model.user.ForgotPasswordRequest;
 import com.budget.app.model.user.LoginRequest;
 import com.budget.app.model.user.LoginResponse;
 import com.budget.app.model.user.UserInfoOnLogin;
@@ -146,6 +149,34 @@ public class UserController {
         }
 
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/forgot")
+    public ResponseEntity<Response> forgotPassword(@RequestBody ForgotPasswordRequest request) throws Exception {
+
+        Response response;
+
+        try {
+            logger.info("[UserController.java] - " + ResponseMessage.FORGOT_PASSWORD_REQUEST.toString() + " - " + request.getEmail());
+
+            // encryption password
+            request.setPassword(passwordEncoder.encode(request.getPassword()));
+
+            userService.forgotPassword(request);
+
+            logger.info("[UserController.java] - " + ResponseMessage.PASSWORD_RESET_SUCCESS.toString());
+        } catch (NotFoundException | IncorrectDetailsException e) {
+            logger.error("[UserController.java] - " + ResponseMessage.PASSWORD_RESET_FAILURE + ": " + e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            logger.error("[UserController.java] - " + ResponseMessage.PASSWORD_RESET_FAILURE.toString(), e);
+            throw e;
+        }
+
+        response = new Response(HttpStatus.OK.value(), ResponseMessage.PASSWORD_RESET_SUCCESS.toString(), LocalDateTime.now());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 
 }

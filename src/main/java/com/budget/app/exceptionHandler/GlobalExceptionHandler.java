@@ -1,6 +1,8 @@
 package com.budget.app.exceptionHandler;
 
 import com.budget.app.exceptions.AlreadyPresentException;
+import com.budget.app.exceptions.IncorrectDetailsException;
+import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.Response;
 import com.budget.app.responseMessage.ResponseMessage;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,29 @@ public class GlobalExceptionHandler {
         error.setMessage(ResponseMessage.BAD_CREDENTIALS.toString());
 
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Response> notFoundExceptionHandler(NotFoundException e) {
+
+        Response error = new Response();
+        error.setMessage(e.getMessage());
+        error.setStatusCode(HttpStatus.NOT_FOUND.value());
+        error.setTimestamp(LocalDateTime.now());
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Response> incorrectDetailsExceptionHandler(IncorrectDetailsException e) {
+
+        Response error = new Response();
+        error.setTimestamp(LocalDateTime.now());
+        error.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        error.setMessage(e.getMessage());
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 
     }
 
