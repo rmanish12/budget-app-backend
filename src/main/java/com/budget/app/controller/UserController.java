@@ -5,10 +5,7 @@ import com.budget.app.exceptions.IncorrectDetailsException;
 import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.jwt.service.JwtService;
 import com.budget.app.model.Response;
-import com.budget.app.model.user.ForgotPasswordRequest;
-import com.budget.app.model.user.LoginRequest;
-import com.budget.app.model.user.LoginResponse;
-import com.budget.app.model.user.UserInfoOnLogin;
+import com.budget.app.model.user.*;
 import com.budget.app.responseMessage.ResponseMessage;
 import com.budget.app.service.UserService;
 import org.slf4j.Logger;
@@ -175,6 +172,28 @@ public class UserController {
 
         response = new Response(HttpStatus.OK.value(), ResponseMessage.PASSWORD_RESET_SUCCESS.toString(), LocalDateTime.now());
 
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<Response> updateUser(@PathVariable int userId, @RequestBody UpdateUserRequest request) throws Exception {
+
+        logger.info("[UserController.java] - " + ResponseMessage.UPDATE_USER_REQUEST.toString());
+
+        Response response;
+
+        try {
+            // calling service method to update user
+            userService.updateUser(userId, request);
+
+            logger.info("[UserController.java] - " + ResponseMessage.UPDATE_USER_SUCCESS.toString());
+        } catch (Exception e) {
+            logger.error("[UserController.java] - " + ResponseMessage.UPDATE_USER_FAILURE.toString() + ": " + e.getMessage(), e);
+            throw e;
+        }
+
+        response = new Response(HttpStatus.OK.value(), ResponseMessage.UPDATE_USER_SUCCESS.toString(), LocalDateTime.now());
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }

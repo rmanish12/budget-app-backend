@@ -5,6 +5,7 @@ import com.budget.app.exceptions.AlreadyPresentException;
 import com.budget.app.exceptions.IncorrectDetailsException;
 import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.user.ForgotPasswordRequest;
+import com.budget.app.model.user.UpdateUserRequest;
 import com.budget.app.repository.UserRepository;
 import com.budget.app.responseMessage.ResponseMessage;
 import org.slf4j.Logger;
@@ -90,6 +91,39 @@ public class UserServiceImpl implements UserService {
             logger.error("[UserServiceImpl.java] - " + ResponseMessage.PASSWORD_RESET_FAILURE.toString(), e);
             throw e;
         }
+    }
+
+    @Override
+    public void updateUser(int userId, UpdateUserRequest request) throws Exception {
+
+        logger.info("[UserServiceImpl.java] - " + ResponseMessage.UPDATE_USER_REQUEST.toString() + " - " + userId);
+
+        try {
+            // check if the user with the given id exist
+            Optional<User> userPresent = userRepository.findById(userId);
+
+            // if not present, throw NotFoundException
+            if(!userPresent.isPresent()) {
+                throw new NotFoundException(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString());
+            }
+
+            // if user is present, update the user
+            User user = userPresent.get();
+
+            user.setFirstName(request.getFirstName());
+            user.setLastName(request.getLastName());
+            user.setGender(request.getGender());
+            user.setDateOfBirth(request.getDateOfBirth());
+
+            userRepository.save(user);
+
+            logger.info("[UserServiceImpl.java] - " + ResponseMessage.UPDATE_USER_SUCCESS.toString());
+
+        } catch (Exception e) {
+            logger.error("[UserServiceImpl.java] - " + ResponseMessage.UPDATE_USER_FAILURE.toString(), e);
+            throw e;
+        }
+
     }
 
 

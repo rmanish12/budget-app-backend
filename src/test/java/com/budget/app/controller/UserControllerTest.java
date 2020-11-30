@@ -1,8 +1,10 @@
 package com.budget.app.controller;
 
 import com.budget.app.entity.User;
+import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.Response;
 import com.budget.app.model.user.LoginResponse;
+import com.budget.app.model.user.UpdateUserRequest;
 import com.budget.app.responseMessage.ResponseMessage;
 import com.budget.app.service.UserService;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -77,6 +79,7 @@ public class UserControllerTest {
     @Test
     public void registerUserTest() throws Exception {
 
+        System.out.println("request: " + mapToJson(user.get()));
         MvcResult mvcResult =  mockMvc
                 .perform(MockMvcRequestBuilders.post("/user/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -114,6 +117,78 @@ public class UserControllerTest {
         Assertions.assertEquals(HttpStatus.OK.value(), status);
         Assertions.assertEquals(result.getUser().getFirstName(), "Test");
         Assertions.assertEquals(result.getUser().getRole(), "ROLE_USER");
+
+    }
+
+    @Test
+    public void updateUserTest() throws Exception {
+
+        int userId = 1;
+        UpdateUserRequest request = new UpdateUserRequest("Test1", "User1", LocalDate.parse("1990-02-02"), "FEMALE");
+
+        Mockito
+                .doNothing()
+                .when(userService)
+                .updateUser(userId, request);
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.put("/user/1")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer" + authToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+
+        Assertions.assertEquals(HttpStatus.OK.value(), status);
+
+    }
+
+    @Test
+    public void updateUserWithIncorrectIdTest() throws Exception {
+
+        UpdateUserRequest request = new UpdateUserRequest("Test1", "User1", LocalDate.parse("1990-02-02"), "FEMALE");
+
+        Mockito
+                .doThrow(new NotFoundException(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString()))
+                .when(userService)
+                .updateUser(Mockito.anyInt(), Mockito.any());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.put("/user/2")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        Response response = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);
+        Assertions.assertEquals(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString(), response.getMessage());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode());
+    }
+
+    @Test
+    public void updateUserWithIncorrectDetailTest() throws Exception {
+
+        UpdateUserRequest request = new UpdateUserRequest("", "User1", LocalDate.parse("1990-02-02"), "FEMALE");
+
+        Mockito
+                .doThrow(new Exception())
+                .when(userService)
+                .updateUser(Mockito.anyInt(), Mockito.any());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.put("/user/1")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), status);
 
     }
 
