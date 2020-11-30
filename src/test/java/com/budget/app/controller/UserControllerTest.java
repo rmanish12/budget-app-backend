@@ -1,8 +1,10 @@
 package com.budget.app.controller;
 
 import com.budget.app.entity.User;
+import com.budget.app.exceptions.IncorrectDetailsException;
 import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.Response;
+import com.budget.app.model.user.ForgotPasswordRequest;
 import com.budget.app.model.user.LoginResponse;
 import com.budget.app.model.user.UpdateUserRequest;
 import com.budget.app.responseMessage.ResponseMessage;
@@ -139,8 +141,11 @@ public class UserControllerTest {
                 .andReturn();
 
         int status = mvcResult.getResponse().getStatus();
+        Response response = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
 
         Assertions.assertEquals(HttpStatus.OK.value(), status);
+        Assertions.assertEquals(ResponseMessage.UPDATE_USER_SUCCESS.toString(), response.getMessage());
+        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
 
     }
 
@@ -189,6 +194,81 @@ public class UserControllerTest {
         int status = mvcResult.getResponse().getStatus();
 
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), status);
+
+    }
+
+    @Test
+    public void forgotPasswordTest() throws Exception {
+
+        ForgotPasswordRequest request = new ForgotPasswordRequest("test.user@gmail.com", LocalDate.parse("1990-01-01"), "random1");
+
+        Mockito
+                .doNothing()
+                .when(userService)
+                .forgotPassword(Mockito.any());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.post("/user/forgot")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        Response response = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.OK.value(), status);
+        Assertions.assertEquals(ResponseMessage.PASSWORD_RESET_SUCCESS.toString(), response.getMessage());
+        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+
+    }
+
+    @Test
+    public void forgotPasswordWithIncorrectEmailTest() throws Exception {
+
+        ForgotPasswordRequest request = new ForgotPasswordRequest("test.user@gmail.com", LocalDate.parse("1990-01-01"), "random1");
+
+        Mockito
+                .doThrow(new NotFoundException(ResponseMessage.USER_NOT_FOUND.toString()))
+                .when(userService)
+                .forgotPassword(Mockito.any());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.post("/user/forgot")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        Response response = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);
+        Assertions.assertEquals(ResponseMessage.USER_NOT_FOUND.toString(), response.getMessage());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode());
+
+    }
+
+    @Test
+    public void forgotPasswordWithIncorrectDetailsTest() throws Exception {
+
+        ForgotPasswordRequest request = new ForgotPasswordRequest("test.user@gmail.com", LocalDate.parse("1990-01-01"), "random1");
+
+        Mockito
+                .doThrow(new IncorrectDetailsException(ResponseMessage.FORGOT_PASSWORD_DETAILS_MISMATCH.toString()))
+                .when(userService)
+                .forgotPassword(Mockito.any());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.post("/user/forgot")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        Response response = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), status);
+        Assertions.assertEquals(ResponseMessage.FORGOT_PASSWORD_DETAILS_MISMATCH.toString(), response.getMessage());
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode());
 
     }
 
