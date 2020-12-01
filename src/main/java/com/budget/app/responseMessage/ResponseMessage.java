@@ -18,6 +18,8 @@ public enum ResponseMessage {
     USER_WITH_ID_NOT_FOUND("No user found with the given id"),
     UPDATE_USER_SUCCESS("User details has been successfully updated"),
     UPDATE_USER_FAILURE("Error while updating user detail"),
+    UPDATE_PASSWORD_REQUEST("Request received for updating password for user with id: "),
+    OLD_PASSWORD_MISMATCH("Old password does not match"),
     TYPE_NOT_FOUND("No such type found"),
     CATEGORY_NOT_FOUND("No such category found"),
     BUDGET_NOT_FOUND("No such budget item found"),

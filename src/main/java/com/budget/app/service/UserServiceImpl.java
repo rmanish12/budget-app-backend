@@ -5,12 +5,14 @@ import com.budget.app.exceptions.AlreadyPresentException;
 import com.budget.app.exceptions.IncorrectDetailsException;
 import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.user.ForgotPasswordRequest;
+import com.budget.app.model.user.UpdatePasswordRequest;
 import com.budget.app.model.user.UpdateUserRequest;
 import com.budget.app.repository.UserRepository;
 import com.budget.app.responseMessage.ResponseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,6 +22,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -126,5 +131,35 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public void updatePassword(int userId, UpdatePasswordRequest request) throws Exception {
 
+        logger.info("[UserServiceImpl.java] - " + ResponseMessage.UPDATE_PASSWORD_REQUEST.toString() + userId);
+
+        try {
+            Optional<User> userPresent = userRepository.findById(userId);
+
+            // if user is not present, throw NotFoundException
+            if(!userPresent.isPresent()) {
+                throw new NotFoundException(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString());
+            } else {
+
+                User user = userPresent.get();
+
+                // check if the old password matches the password saved in database
+                if(passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+                    user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+                } else {
+                    throw new IncorrectDetailsException(ResponseMessage.OLD_PASSWORD_MISMATCH.toString());
+                }
+
+                logger.info("[UserServiceImpl.java] - " + ResponseMessage.PASSWORD_RESET_SUCCESS.toString());
+
+            }
+        } catch (Exception e) {
+            logger.error("[UserServiceImpl.java] - " + ResponseMessage.PASSWORD_RESET_FAILURE.toString(), e);
+            throw e;
+        }
+
+    }
 }

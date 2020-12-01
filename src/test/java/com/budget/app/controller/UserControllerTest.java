@@ -6,6 +6,7 @@ import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.Response;
 import com.budget.app.model.user.ForgotPasswordRequest;
 import com.budget.app.model.user.LoginResponse;
+import com.budget.app.model.user.UpdatePasswordRequest;
 import com.budget.app.model.user.UpdateUserRequest;
 import com.budget.app.responseMessage.ResponseMessage;
 import com.budget.app.service.UserService;
@@ -268,6 +269,84 @@ public class UserControllerTest {
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), status);
         Assertions.assertEquals(ResponseMessage.FORGOT_PASSWORD_DETAILS_MISMATCH.toString(), response.getMessage());
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode());
+
+    }
+
+    @Test
+    public void updatePasswordTest() throws Exception {
+
+        UpdatePasswordRequest request = new UpdatePasswordRequest("random", "random1");
+
+        Mockito
+                .doNothing()
+                .when(userService)
+                .updatePassword(Mockito.anyInt(), Mockito.any());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.put("/user/password/2")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        Response response = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.OK.value(), status);
+        Assertions.assertEquals(ResponseMessage.PASSWORD_RESET_SUCCESS.toString(), response.getMessage());
+        Assertions.assertEquals(HttpStatus.OK.value(), response.getStatusCode());
+
+    }
+
+    @Test
+    public void updatePasswordWithIncorrectUserId() throws Exception {
+
+        UpdatePasswordRequest request = new UpdatePasswordRequest("random", "random1");
+
+        Mockito
+                .doThrow(new NotFoundException(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString()))
+                .when(userService)
+                .updatePassword(Mockito.anyInt(), Mockito.any());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.put("/user/password/2")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        Response response = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);
+        Assertions.assertEquals(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString(), response.getMessage());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode());
+
+    }
+
+    @Test
+    public void updatePasswordWithIncorrectDetailsTest() throws Exception {
+
+        UpdatePasswordRequest request = new UpdatePasswordRequest("random", "random1");
+
+        Mockito
+                .doThrow(new IncorrectDetailsException(ResponseMessage.OLD_PASSWORD_MISMATCH.toString()))
+                .when(userService)
+                .updatePassword(Mockito.anyInt(), Mockito.any());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.put("/user/password/2")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapToJson(request)))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        Response response = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), status);
+        Assertions.assertEquals(ResponseMessage.OLD_PASSWORD_MISMATCH.toString(), response.getMessage());
         Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode());
 
     }

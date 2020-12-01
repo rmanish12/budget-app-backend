@@ -198,4 +198,27 @@ public class UserController {
 
     }
 
+    @PutMapping("/password/{userId}")
+    public ResponseEntity<Response> updatePassword(@PathVariable int userId, @RequestBody UpdatePasswordRequest request) throws Exception {
+
+        logger.info("[UserController.java] - " + ResponseMessage.UPDATE_PASSWORD_REQUEST.toString() + userId);
+
+        Response response;
+
+        try {
+            // calling service method to update password
+            userService.updatePassword(userId, request);
+
+            logger.info("[UserController.java] - " + ResponseMessage.PASSWORD_RESET_SUCCESS.toString());
+        } catch (Exception e) {
+            logger.error("[UserController.java] - " + ResponseMessage.PASSWORD_RESET_FAILURE.toString() + " - " + e.getMessage(), e);
+            throw e;
+        }
+
+        response = new Response(HttpStatus.OK.value(), ResponseMessage.PASSWORD_RESET_SUCCESS.toString(), LocalDateTime.now());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
 }
