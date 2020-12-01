@@ -5,6 +5,7 @@ import com.budget.app.exceptions.AlreadyPresentException;
 import com.budget.app.exceptions.IncorrectDetailsException;
 import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.user.ForgotPasswordRequest;
+import com.budget.app.model.user.GetUserDetailsResponse;
 import com.budget.app.model.user.UpdatePasswordRequest;
 import com.budget.app.model.user.UpdateUserRequest;
 import com.budget.app.repository.UserRepository;
@@ -160,6 +161,44 @@ public class UserServiceImpl implements UserService {
             logger.error("[UserServiceImpl.java] - " + ResponseMessage.PASSWORD_RESET_FAILURE.toString(), e);
             throw e;
         }
+
+    }
+
+    @Override
+    public GetUserDetailsResponse getUserDetails(int userId) throws Exception {
+
+        logger.info("[UserServiceImpl.java] - " + ResponseMessage.GET_USER_DETAILS_REQUEST.toString() + userId);
+
+        GetUserDetailsResponse response;
+
+        try {
+
+            Optional<User> userPresent = userRepository.findById(userId);
+
+            // checking if user is present, else throw NotFoundException
+            if(!userPresent.isPresent()) {
+                throw new NotFoundException(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString());
+            } else {
+
+                User user = userPresent.get();
+
+                response = new GetUserDetailsResponse();
+                response.setEmail(user.getEmail());
+                response.setFirstName(user.getFirstName());
+                response.setLastName(user.getLastName());
+                response.setDateOfBirth(user.getDateOfBirth());
+                response.setGender(user.getGender());
+
+                logger.info("[UserServiceImpl.java] - " + ResponseMessage.GET_USER_DETAILS_SUCCESS.toString());
+
+            }
+
+        } catch (Exception e) {
+            logger.error("[UserServiceImpl.java] - " + ResponseMessage.GET_USER_DETAILS_FAILURE.toString());
+            throw e;
+        }
+
+        return response;
 
     }
 }

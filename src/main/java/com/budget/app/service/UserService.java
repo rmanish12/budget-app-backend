@@ -2,6 +2,7 @@ package com.budget.app.service;
 
 import com.budget.app.entity.User;
 import com.budget.app.model.user.ForgotPasswordRequest;
+import com.budget.app.model.user.GetUserDetailsResponse;
 import com.budget.app.model.user.UpdatePasswordRequest;
 import com.budget.app.model.user.UpdateUserRequest;
 
@@ -14,5 +15,6 @@ public interface UserService {
     public void forgotPassword(ForgotPasswordRequest request) throws Exception;
     public void updateUser(int userId, UpdateUserRequest user) throws Exception;
     public void updatePassword(int userId, UpdatePasswordRequest request) throws Exception;
+    public GetUserDetailsResponse getUserDetails(int userId) throws Exception;
 
 }

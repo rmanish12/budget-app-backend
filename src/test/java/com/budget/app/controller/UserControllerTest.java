@@ -4,10 +4,7 @@ import com.budget.app.entity.User;
 import com.budget.app.exceptions.IncorrectDetailsException;
 import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.Response;
-import com.budget.app.model.user.ForgotPasswordRequest;
-import com.budget.app.model.user.LoginResponse;
-import com.budget.app.model.user.UpdatePasswordRequest;
-import com.budget.app.model.user.UpdateUserRequest;
+import com.budget.app.model.user.*;
 import com.budget.app.responseMessage.ResponseMessage;
 import com.budget.app.service.UserService;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -348,6 +345,54 @@ public class UserControllerTest {
         Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), status);
         Assertions.assertEquals(ResponseMessage.OLD_PASSWORD_MISMATCH.toString(), response.getMessage());
         Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode());
+
+    }
+
+    @Test
+    public void getUserDetailsTest() throws Exception {
+
+        GetUserDetailsResponse expected = new GetUserDetailsResponse("testuser@gmail.com", "Test", "User", LocalDate.parse("1990-01-01"), "Female");
+
+        Mockito
+                .when(userService.getUserDetails(Mockito.anyInt()))
+                .thenReturn(expected);
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.get("/user/1")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        GetUserDetailsResponse actual = mapFromJson(mvcResult.getResponse().getContentAsString(), GetUserDetailsResponse.class);
+
+        Assertions.assertEquals(HttpStatus.OK.value(), status);
+        Assertions.assertEquals(expected.getEmail(), actual.getEmail());
+        Assertions.assertEquals(expected.getFirstName(), actual.getFirstName());
+        Assertions.assertEquals(expected.getLastName(), actual.getLastName());
+        Assertions.assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
+        Assertions.assertEquals(expected.getGender(), actual.getGender());
+
+    }
+
+    @Test
+    public void getUserDetailsWithIncorrectIdTest() throws Exception {
+
+        Mockito
+                .doThrow(new NotFoundException(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString()))
+                .when(userService)
+                .getUserDetails(Mockito.anyInt());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.get("/user/1")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        Response response = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);
+        Assertions.assertEquals(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString(), response.getMessage());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode());
 
     }
 

@@ -221,4 +221,25 @@ public class UserController {
 
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<GetUserDetailsResponse> getUserDetails(@PathVariable int userId) throws Exception {
+
+        logger.info("[UserController.java] - " + ResponseMessage.GET_USER_DETAILS_REQUEST.toString() + userId);
+
+        GetUserDetailsResponse response;
+
+        try {
+
+            // calling service method to get user details
+            response = userService.getUserDetails(userId);
+
+        } catch (Exception e) {
+            logger.error("[UserController.java] - " + ResponseMessage.GET_USER_DETAILS_FAILURE.toString() + " - " + e.getMessage(), e);
+            throw e;
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
 }
