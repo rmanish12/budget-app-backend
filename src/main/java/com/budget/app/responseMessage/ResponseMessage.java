@@ -23,7 +23,7 @@ public enum ResponseMessage {
     TYPE_NOT_FOUND("No such type found"),
     CATEGORY_NOT_FOUND("No such category found"),
     BUDGET_NOT_FOUND("No such budget item found"),
-    USER_ALREADY_PRESENT("User with the given id/email is already present. Please try again with another email id"),
+    USER_ALREADY_PRESENT("User already present. Please try again"),
     TYPE_ALREADY_PRESENT("The given type is already present"),
     CATEGORY_ALREADY_PRESENT("The given category is already present"),
     BUDGET_ALREADY_PRESENT("The given budget item is already present"),
