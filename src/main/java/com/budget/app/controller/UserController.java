@@ -162,11 +162,8 @@ public class UserController {
             userService.forgotPassword(request);
 
             logger.info("[UserController.java] - " + ResponseMessage.PASSWORD_RESET_SUCCESS.toString());
-        } catch (NotFoundException | IncorrectDetailsException e) {
-            logger.error("[UserController.java] - " + ResponseMessage.PASSWORD_RESET_FAILURE + ": " + e.getMessage(), e);
-            throw e;
         } catch (Exception e) {
-            logger.error("[UserController.java] - " + ResponseMessage.PASSWORD_RESET_FAILURE.toString(), e);
+            logger.error("[UserController.java] - " + ResponseMessage.PASSWORD_RESET_FAILURE + ": " + e.getMessage(), e);
             throw e;
         }
 

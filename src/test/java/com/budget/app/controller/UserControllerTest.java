@@ -1,6 +1,7 @@
 package com.budget.app.controller;
 
 import com.budget.app.entity.User;
+import com.budget.app.exceptions.AlreadyPresentException;
 import com.budget.app.exceptions.IncorrectDetailsException;
 import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.Response;
@@ -48,8 +49,6 @@ public class UserControllerTest {
     @Value("${jwt.test.token}")
     private String authToken;
 
-    private Optional<User> user;
-
     private static ObjectMapper MAPPER;
 
     @BeforeAll
@@ -61,8 +60,6 @@ public class UserControllerTest {
 
     @BeforeEach
     public void setup() {
-
-        user = Optional.of(new User("test.user@gmail.com", "testabc", "Test", "User", LocalDate.parse("1990-01-01"), "Male", "ROLE_USER"));
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 
@@ -79,11 +76,17 @@ public class UserControllerTest {
     @Test
     public void registerUserTest() throws Exception {
 
-        System.out.println("request: " + mapToJson(user.get()));
+        User user = new User("test.user@gmail.com", "testabc", "Test", "User", LocalDate.parse("1990-01-01"), "Male", "ROLE_USER");
+
+        Mockito
+                .doNothing()
+                .when(userService)
+                .registerUser(Mockito.any());
+
         MvcResult mvcResult =  mockMvc
                 .perform(MockMvcRequestBuilders.post("/user/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapToJson(user.get())))
+                .content(mapToJson(user)))
                 .andReturn();
 
         int status = mvcResult.getResponse().getStatus();
@@ -97,10 +100,37 @@ public class UserControllerTest {
     }
 
     @Test
-    public void authenticateUserTest() throws Exception {
+    public void registerUserWithDuplicateIdOrEmail() throws Exception {
+
+        User user = new User("test.user@gmail.com", "testabc", "Test", "User", LocalDate.parse("1990-01-01"), "Male", "ROLE_USER");
 
         Mockito
-                .when(userService.findUserByEmail("test.user@gmail.com"))
+                .doThrow(new AlreadyPresentException(ResponseMessage.USER_ALREADY_PRESENT.toString()))
+                .when(userService)
+                .registerUser(Mockito.any());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.post("/user/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(user)))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        Response response = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.CONFLICT.value(), status);
+        Assertions.assertEquals(ResponseMessage.USER_ALREADY_PRESENT.toString(), response.getMessage());
+        Assertions.assertEquals(HttpStatus.CONFLICT.value(), response.getStatusCode());
+
+    }
+
+    @Test
+    public void authenticateUserTest() throws Exception {
+
+        Optional<User> user = Optional.of(new User("test.user@gmail.com", "testabc", "Test", "User", LocalDate.parse("1990-01-01"), "Male", "ROLE_USER"));
+
+        Mockito
+                .when(userService.findUserByEmail(Mockito.anyString()))
                 .thenReturn(user);
 
         MvcResult mvcResult = mockMvc
@@ -115,8 +145,8 @@ public class UserControllerTest {
         LoginResponse result = mapFromJson(content, LoginResponse.class);
 
         Assertions.assertEquals(HttpStatus.OK.value(), status);
-        Assertions.assertEquals(result.getUser().getFirstName(), "Test");
-        Assertions.assertEquals(result.getUser().getRole(), "ROLE_USER");
+        Assertions.assertEquals(result.getUser().getFirstName(), user.get().getFirstName());
+        Assertions.assertEquals(result.getUser().getRole(), user.get().getRole());
 
     }
 
