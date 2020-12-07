@@ -23,6 +23,10 @@ public enum ResponseMessage {
     GET_USER_DETAILS_FAILURE("Error while fetching user details"),
     GET_USER_DETAILS_SUCCESS("Returning user details"),
     OLD_PASSWORD_MISMATCH("Old password does not match"),
+
+    GET_BUDGET_TYPES_REQUEST("Request received for fetching all budget types"),
+    GET_BUDGET_TYPES_FAILURE("Error while fetching budget types "),
+
     TYPE_NOT_FOUND("No such type found"),
     CATEGORY_NOT_FOUND("No such category found"),
     BUDGET_NOT_FOUND("No such budget item found"),
