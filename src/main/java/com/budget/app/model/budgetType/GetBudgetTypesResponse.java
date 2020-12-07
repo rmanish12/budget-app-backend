@@ -1,25 +1,25 @@
 package com.budget.app.model.budgetType;
 
-import com.budget.app.entity.BudgetTypes;
+import com.budget.app.entity.BudgetType;
 
 import java.util.List;
 
 public class GetBudgetTypesResponse {
 
-    private List<BudgetTypes> budgetTypes;
+    private List<BudgetType> budgetTypes;
 
     public GetBudgetTypesResponse() {
     }
 
-    public GetBudgetTypesResponse(List<BudgetTypes> budgetTypes) {
+    public GetBudgetTypesResponse(List<BudgetType> budgetTypes) {
         this.budgetTypes = budgetTypes;
     }
 
-    public void setBudgetTypes(List<BudgetTypes> budgetTypes) {
+    public void setBudgetTypes(List<BudgetType> budgetTypes) {
         this.budgetTypes = budgetTypes;
     }
 
-    public List<BudgetTypes> getBudgetTypes() {
+    public List<BudgetType> getBudgetTypes() {
         return budgetTypes;
     }
 }

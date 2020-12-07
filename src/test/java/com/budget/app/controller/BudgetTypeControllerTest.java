@@ -1,6 +1,6 @@
 package com.budget.app.controller;
 
-import com.budget.app.entity.BudgetTypes;
+import com.budget.app.entity.BudgetType;
 import com.budget.app.model.Response;
 import com.budget.app.model.budgetType.GetBudgetTypesResponse;
 import com.budget.app.responseMessage.ResponseMessage;
@@ -71,8 +71,8 @@ public class BudgetTypeControllerTest {
     @Test
     public void getBudgetTypesTest() throws Exception {
 
-        List<BudgetTypes> types = Arrays.asList(new BudgetTypes(1, "INCOME"),
-                new BudgetTypes(2, "EXPENSE"));
+        List<BudgetType> types = Arrays.asList(new BudgetType(1, "INCOME"),
+                new BudgetType(2, "EXPENSE"));
 
         GetBudgetTypesResponse budgetTypes = new GetBudgetTypesResponse(types);
 

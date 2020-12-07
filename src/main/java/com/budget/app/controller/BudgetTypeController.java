@@ -1,6 +1,5 @@
 package com.budget.app.controller;
 
-import com.budget.app.entity.BudgetTypes;
 import com.budget.app.model.budgetType.GetBudgetTypesResponse;
 import com.budget.app.responseMessage.ResponseMessage;
 import com.budget.app.service.BudgetTypeService;
@@ -12,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/types")

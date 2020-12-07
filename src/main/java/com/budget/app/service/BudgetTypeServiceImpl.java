@@ -1,6 +1,5 @@
 package com.budget.app.service;
 
-import com.budget.app.entity.BudgetTypes;
 import com.budget.app.model.budgetType.GetBudgetTypesResponse;
 import com.budget.app.repository.BudgetTypeRepository;
 import com.budget.app.responseMessage.ResponseMessage;
@@ -8,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class BudgetTypeServiceImpl implements BudgetTypeService {

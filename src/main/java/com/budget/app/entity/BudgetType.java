@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "types")
-public class BudgetTypes {
+public class BudgetType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,10 +13,10 @@ public class BudgetTypes {
     @Column(nullable = false, length = 20)
     private String type;
 
-    public BudgetTypes() {
+    public BudgetType() {
     }
 
-    public BudgetTypes(int id, String type) {
+    public BudgetType(int id, String type) {
         this.id = id;
         this.type = type;
     }
