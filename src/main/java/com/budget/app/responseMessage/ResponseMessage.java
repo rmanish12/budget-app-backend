@@ -31,6 +31,9 @@ public enum ResponseMessage {
     BUDGET_TYPE_NOT_FOUND("No such budget type found"),
     ADD_CATEGORY_FAILURE("Error while adding category"),
     ADD_CATEGORY_SUCCESS("Category has been successfully added for the given budget type"),
+    GET_CATEGORIES_REQUEST("Request received for fetching all categories"),
+    GET_CATEGORIES_SUCCESS("Returning fetched categories"),
+    GET_CATEGORIES_FAILURE("Error while fetching categories "),
 
     TYPE_NOT_FOUND("No such type found"),
     CATEGORY_NOT_FOUND("No such category found"),

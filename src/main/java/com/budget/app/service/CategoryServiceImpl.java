@@ -1,8 +1,10 @@
 package com.budget.app.service;
 
 import com.budget.app.entity.BudgetType;
+import com.budget.app.entity.Category;
 import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.category.AddCategoryRequest;
+import com.budget.app.model.category.GetCategoriesResponse;
 import com.budget.app.repository.BudgetTypeRepository;
 import com.budget.app.responseMessage.ResponseMessage;
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,5 +54,37 @@ public class CategoryServiceImpl implements CategoryService {
             logger.error(className + ResponseMessage.ADD_CATEGORY_FAILURE.toString() + " " + e.getMessage(), e);
             throw e;
         }
+    }
+
+    @Override
+    public GetCategoriesResponse getCategories() throws Exception {
+
+        logger.info(className + ResponseMessage.GET_CATEGORIES_REQUEST.toString());
+
+        GetCategoriesResponse categories = null;
+
+        try {
+
+            String incomeType = "income";
+            Optional<BudgetType> incomeBudgetType = budgetTypeRepository.findByType(incomeType.toUpperCase());
+
+            List<Category> income = incomeBudgetType.get().getCategories();
+
+            String expenseType = "expense";
+            Optional<BudgetType> expenseBudgetType = budgetTypeRepository.findByType(expenseType.toUpperCase());
+
+            List<Category> expense = expenseBudgetType.get().getCategories();
+
+            categories = new GetCategoriesResponse(income, expense);
+
+            logger.info(className + ResponseMessage.GET_CATEGORIES_SUCCESS.toString());
+
+        } catch (Exception e) {
+            logger.error(className + ResponseMessage.GET_CATEGORIES_FAILURE.toString() + e.getMessage(), e);
+            throw e;
+        }
+
+        return categories;
+
     }
 }

@@ -4,6 +4,7 @@ import com.budget.app.entity.Category;
 import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.Response;
 import com.budget.app.model.category.AddCategoryRequest;
+import com.budget.app.model.category.GetCategoriesResponse;
 import com.budget.app.responseMessage.ResponseMessage;
 import com.budget.app.service.CategoryService;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -31,6 +32,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @SpringBootTest
 public class CategoryControllerTest {
@@ -120,6 +122,53 @@ public class CategoryControllerTest {
         Response actualResponse = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
 
         Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);
+        Assertions.assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
+        Assertions.assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
+
+    }
+
+    @Test
+    public void getCategoriesTest() throws Exception {
+
+        GetCategoriesResponse expectedResponse = new GetCategoriesResponse(Arrays.asList(new Category("Salary")), Arrays.asList(new Category("Grocery")));
+
+        Mockito
+                .when(categoryService.getCategories())
+                .thenReturn(expectedResponse);
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.get("/category")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        GetCategoriesResponse actualResponse = mapFromJson(mvcResult.getResponse().getContentAsString(), GetCategoriesResponse.class);
+
+        Assertions.assertEquals(HttpStatus.OK.value(), status);
+        Assertions.assertEquals(expectedResponse.getIncome().get(0).getName(), actualResponse.getIncome().get(0).getName());
+        Assertions.assertEquals(expectedResponse.getExpense().get(0).getName(), actualResponse.getExpense().get(0).getName());
+
+    }
+
+    @Test
+    public void getCategoriesThrowsExceptionTest() throws Exception {
+
+        Response expectedResponse = new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), ResponseMessage.SERVER_ERROR.toString(), LocalDateTime.now());
+
+        Mockito
+                .doThrow(new Exception(ResponseMessage.GET_BUDGET_TYPES_FAILURE.toString()))
+                .when(categoryService)
+                .getCategories();
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.get("/category")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        Response actualResponse = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), status);
         Assertions.assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
         Assertions.assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
 
