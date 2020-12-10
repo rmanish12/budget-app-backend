@@ -2,7 +2,7 @@ package com.budget.app.model.budgetItem;
 
 import java.time.LocalDate;
 
-public class BudgetItemRequest {
+public class BudgetItemRequestResponse {
 
     private int typeId;
     private int categoryId;
@@ -10,10 +10,10 @@ public class BudgetItemRequest {
     private String description;
     private LocalDate dateOfTransaction;
 
-    public BudgetItemRequest() {
+    public BudgetItemRequestResponse() {
     }
 
-    public BudgetItemRequest(int typeId, int categoryId, float amount, String description, LocalDate dateOfTransaction) {
+    public BudgetItemRequestResponse(int typeId, int categoryId, float amount, String description, LocalDate dateOfTransaction) {
         this.typeId = typeId;
         this.categoryId = categoryId;
         this.amount = amount;

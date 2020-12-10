@@ -6,7 +6,6 @@ import com.budget.app.entity.Category;
 import com.budget.app.entity.User;
 import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.budgetItem.AddBudgetItemsRequest;
-import com.budget.app.model.budgetItem.BudgetItemRequest;
 import com.budget.app.repository.BudgetTypeRepository;
 import com.budget.app.repository.CategoryRepository;
 import com.budget.app.repository.UserRepository;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 
 @Service
