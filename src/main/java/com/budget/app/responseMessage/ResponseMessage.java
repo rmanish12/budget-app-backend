@@ -35,6 +35,10 @@ public enum ResponseMessage {
     GET_CATEGORIES_SUCCESS("Returning fetched categories"),
     GET_CATEGORIES_FAILURE("Error while fetching categories "),
 
+    ADD_BUDGET_ITEMS_REQUEST("Request received for adding budget items "),
+    ADD_BUDGET_ITEMS_FAILURE("Error while adding budget items "),
+    ADD_BUDGET_ITEMS_SUCCESS("Budget items have been successfully added"),
+
     TYPE_NOT_FOUND("No such type found"),
     CATEGORY_NOT_FOUND("No such category found"),
     BUDGET_NOT_FOUND("No such budget item found"),

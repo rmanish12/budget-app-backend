@@ -19,6 +19,9 @@ public class BudgetType {
     @JoinColumn(name = "type_id")
     private List<Category> categories;
 
+    @OneToMany(mappedBy = "budgetType", cascade = CascadeType.ALL)
+    private List<BudgetItem> budgetItems;
+
     public BudgetType() {
     }
 
@@ -54,5 +57,13 @@ public class BudgetType {
         }
 
         categories.add(category);
+    }
+
+    public void addBudgetItem(BudgetItem budgetItem) {
+        if(budgetItems==null) {
+            budgetItems = new ArrayList<>();
+        }
+
+        budgetItems.add(budgetItem);
     }
 }

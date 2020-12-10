@@ -3,6 +3,8 @@ package com.budget.app.entity;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -41,6 +43,10 @@ public class User {
 
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private List<BudgetItem> budgetItems;
 
     public User() {
     }
@@ -126,5 +132,13 @@ public class User {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
+    }
+
+    public void addBudgetItem(BudgetItem budgetItem) {
+        if(budgetItems==null) {
+            budgetItems = new ArrayList<>();
+        }
+
+        budgetItems.add(budgetItem);
     }
 }

@@ -1,6 +1,8 @@
 package com.budget.app.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "categories")
@@ -12,6 +14,9 @@ public class Category {
 
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<BudgetItem> budgetItems;
 
     public Category() {
     }
@@ -34,5 +39,13 @@ public class Category {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    public void addBudgetItem(BudgetItem budgetItem) {
+        if(budgetItems==null) {
+            budgetItems = new ArrayList<>();
+        }
+
+        budgetItems.add(budgetItem);
     }
 }
