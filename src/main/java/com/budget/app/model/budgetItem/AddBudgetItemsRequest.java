@@ -5,9 +5,9 @@ import java.util.List;
 public class AddBudgetItemsRequest {
 
     private int userId;
-    private List<BudgetItemRequestResponse> budgetItems;
+    private List<BudgetItemRequest> budgetItems;
 
-    public AddBudgetItemsRequest(int userId, List<BudgetItemRequestResponse> budgetItems) {
+    public AddBudgetItemsRequest(int userId, List<BudgetItemRequest> budgetItems) {
         this.userId = userId;
         this.budgetItems = budgetItems;
     }
@@ -16,7 +16,7 @@ public class AddBudgetItemsRequest {
         return userId;
     }
 
-    public List<BudgetItemRequestResponse> getBudgetItems() {
+    public List<BudgetItemRequest> getBudgetItems() {
         return budgetItems;
     }
 
