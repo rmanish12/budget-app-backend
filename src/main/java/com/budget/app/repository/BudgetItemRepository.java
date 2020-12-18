@@ -25,10 +25,19 @@ public interface BudgetItemRepository extends JpaRepository<BudgetItem, Integer>
 
     // method to get the total count of budget items
     @Query(
-            value = "select count(b)"
-                    + " from BudgetItem b"
-                    + " where b.user.id = ?1"
-                    + " and b.dateOfTransaction between ?2 and ?3"
-                    + " and b.budgetType.type = ?4")
+    value = "select count(b)"
+            + " from BudgetItem b"
+            + " where b.user.id = ?1"
+            + " and b.dateOfTransaction between ?2 and ?3"
+            + " and b.budgetType.type = ?4")
     int findBudgetItemsCount(int userId, LocalDate fromDate, LocalDate toDate, String type);
+
+    // method to get total amount of income and expense in the current month
+    @Query(
+    value = "select sum(b.amount)" +
+            " from BudgetItem b" +
+            " where b.user.id = ?1" +
+            " and b.dateOfTransaction between ?2 and ?3" +
+            " and b.budgetType.id = ?4")
+    int totalAmount(int userId, LocalDate fromDate, LocalDate toDate, int typeId);
 }

@@ -41,6 +41,9 @@ public enum ResponseMessage {
     GET_BUDGET_ITEMS_REQUEST("Request received for fetching budget items for userId: "),
     GET_BUDGET_ITEMS_SUCCESS("Returning budget items for the user"),
     GET_BUDGET_ITEMS_FAILURE("Error while fetching budget items"),
+    GET_MONTHLY_BUDGET_OVERVIEW_REQUEST("Request received for fetching monthly budget overview for user with id: "),
+    GET_MONTHLY_BUDGET_OVERVIEW_FAILURE("Error while fetching monthly budget overview"),
+    GET_MONTHLY_BUDGET_OVERVIEW_SUCCESS("Returning monthly budget overview"),
 
     TYPE_NOT_FOUND("No such type found"),
     CATEGORY_NOT_FOUND("No such category found"),

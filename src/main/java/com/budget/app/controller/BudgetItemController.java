@@ -3,6 +3,7 @@ package com.budget.app.controller;
 import com.budget.app.model.Response;
 import com.budget.app.model.budgetItem.AddBudgetItemsRequest;
 import com.budget.app.model.budgetItem.GetBudgetItemsResponse;
+import com.budget.app.model.budgetItem.MonthlyBudgetOverview;
 import com.budget.app.responseMessage.ResponseMessage;
 import com.budget.app.service.BudgetItemService;
 import org.slf4j.Logger;
@@ -73,6 +74,26 @@ public class BudgetItemController {
 
         } catch (Exception e) {
             logger.error(className + ResponseMessage.GET_BUDGET_ITEMS_FAILURE.toString() + e.getMessage(), e);
+            throw e;
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/monthly/{id}")
+    public ResponseEntity<MonthlyBudgetOverview> getMonthlyBudgetOverview(@PathVariable("id") int userId) throws Exception {
+
+        logger.info(className + ResponseMessage.GET_MONTHLY_BUDGET_OVERVIEW_REQUEST.toString());
+
+        MonthlyBudgetOverview response = null;
+
+        try {
+            response = budgetItemService.getMonthlyBudgetOverview(userId);
+
+            logger.info(className + ResponseMessage.GET_MONTHLY_BUDGET_OVERVIEW_SUCCESS.toString());
+        } catch (Exception e) {
+            logger.error(className + ResponseMessage.GET_MONTHLY_BUDGET_OVERVIEW_FAILURE.toString() + e.getMessage(), e);
             throw e;
         }
 

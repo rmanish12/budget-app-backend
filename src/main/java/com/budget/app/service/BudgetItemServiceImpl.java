@@ -8,6 +8,7 @@ import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.budgetItem.AddBudgetItemsRequest;
 import com.budget.app.model.budgetItem.BudgetItemResponse;
 import com.budget.app.model.budgetItem.GetBudgetItemsResponse;
+import com.budget.app.model.budgetItem.MonthlyBudgetOverview;
 import com.budget.app.repository.BudgetItemRepository;
 import com.budget.app.repository.BudgetTypeRepository;
 import com.budget.app.repository.CategoryRepository;
@@ -127,7 +128,7 @@ public class BudgetItemServiceImpl implements BudgetItemService {
             response.setBudgetType(type);
             response.setTotalCount(totalCount);
 
-            logger.info(className + ResponseMessage.GET_BUDGET_ITEMS_SUCCESS);
+            logger.info(className + ResponseMessage.GET_BUDGET_ITEMS_SUCCESS.toString());
 
         } catch (Exception e) {
             logger.error(className + ResponseMessage.GET_BUDGET_ITEMS_FAILURE.toString() + e.getMessage(), e);
@@ -135,5 +136,40 @@ public class BudgetItemServiceImpl implements BudgetItemService {
         }
 
         return response;
+    }
+
+    @Override
+    public MonthlyBudgetOverview getMonthlyBudgetOverview(int userId) throws Exception {
+
+        logger.info(className + ResponseMessage.GET_MONTHLY_BUDGET_OVERVIEW_REQUEST.toString() + userId);
+
+        MonthlyBudgetOverview monthlyBudgetOverview = null;
+
+        try {
+
+            LocalDate currentDate = LocalDate.now();
+            LocalDate startDate = currentDate.withDayOfMonth(1);
+            LocalDate endDate = currentDate.withDayOfMonth(currentDate.lengthOfMonth());
+
+            String income = "INCOME";
+            String expense = "EXPENSE";
+
+            int totalIncome = budgetItemRepository.totalAmount(userId, startDate, endDate, budgetTypeRepository.findByType(income).get().getId());
+            int totalExpense = budgetItemRepository.totalAmount(userId, startDate, endDate, budgetTypeRepository.findByType(expense).get().getId());
+            int total = totalIncome - totalExpense;
+
+            monthlyBudgetOverview = new MonthlyBudgetOverview();
+            monthlyBudgetOverview.setIncome(totalIncome);
+            monthlyBudgetOverview.setExpense(totalExpense);
+            monthlyBudgetOverview.setTotal(total);
+
+            logger.info(className + ResponseMessage.GET_MONTHLY_BUDGET_OVERVIEW_SUCCESS.toString());
+
+        } catch (Exception e) {
+            logger.error(className + ResponseMessage.GET_MONTHLY_BUDGET_OVERVIEW_FAILURE.toString() + e.getMessage(), e);
+            throw e;
+        }
+
+        return monthlyBudgetOverview;
     }
 }
