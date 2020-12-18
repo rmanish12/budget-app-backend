@@ -38,6 +38,9 @@ public enum ResponseMessage {
     ADD_BUDGET_ITEMS_REQUEST("Request received for adding budget items "),
     ADD_BUDGET_ITEMS_FAILURE("Error while adding budget items "),
     ADD_BUDGET_ITEMS_SUCCESS("Budget items have been successfully added"),
+    GET_BUDGET_ITEMS_REQUEST("Request received for fetching budget items for userId: "),
+    GET_BUDGET_ITEMS_SUCCESS("Returning budget items for the user"),
+    GET_BUDGET_ITEMS_FAILURE("Error while fetching budget items"),
 
     TYPE_NOT_FOUND("No such type found"),
     CATEGORY_NOT_FOUND("No such category found"),

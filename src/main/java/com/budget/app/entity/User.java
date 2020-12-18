@@ -44,8 +44,7 @@ public class User {
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<BudgetItem> budgetItems;
 
     public User() {

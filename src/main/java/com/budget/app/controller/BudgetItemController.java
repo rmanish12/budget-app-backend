@@ -2,6 +2,7 @@ package com.budget.app.controller;
 
 import com.budget.app.model.Response;
 import com.budget.app.model.budgetItem.AddBudgetItemsRequest;
+import com.budget.app.model.budgetItem.GetBudgetItemsResponse;
 import com.budget.app.responseMessage.ResponseMessage;
 import com.budget.app.service.BudgetItemService;
 import org.slf4j.Logger;
@@ -9,11 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestController
@@ -48,4 +47,36 @@ public class BudgetItemController {
 
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<GetBudgetItemsResponse> getBudgetItems(
+            @PathVariable("id") int userId,
+            @RequestParam("fromDate") String fromDate,
+            @RequestParam("toDate") String toDate,
+            @RequestParam("type") String type,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("orderBy") String orderBy,
+            @RequestParam("page") int page,
+            @RequestParam("limit") int limit
+    ) throws Exception {
+
+        logger.info(className + ResponseMessage.GET_BUDGET_ITEMS_REQUEST.toString() + userId);
+        GetBudgetItemsResponse response = null;
+
+        try {
+
+            LocalDate startDate = LocalDate.parse(fromDate);
+            LocalDate endDate = LocalDate.parse(toDate);
+
+            response = budgetItemService.getBudgetItems(userId, startDate, endDate, type, sortBy, orderBy, page, limit);
+
+            logger.info(className + ResponseMessage.GET_BUDGET_ITEMS_SUCCESS);
+
+        } catch (Exception e) {
+            logger.error(className + ResponseMessage.GET_BUDGET_ITEMS_FAILURE.toString() + e.getMessage(), e);
+            throw e;
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
 }

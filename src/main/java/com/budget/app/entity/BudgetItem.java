@@ -17,13 +17,32 @@ public class BudgetItem {
 
     private String description;
 
-    @ManyToOne
+    @ManyToOne(cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH
+    })
     @JoinColumn(name = "type_id")
     private BudgetType budgetType;
 
-    @ManyToOne
+    @ManyToOne(cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH
+    })
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne(cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH
+    })
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "date_of_transaction", nullable = false)
     private LocalDate dateOfTransaction;
@@ -83,6 +102,10 @@ public class BudgetItem {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void setDateOfTransaction(LocalDate dateOfTransaction) {
