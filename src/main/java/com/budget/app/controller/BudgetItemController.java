@@ -4,6 +4,7 @@ import com.budget.app.model.Response;
 import com.budget.app.model.budgetItem.AddBudgetItemsRequest;
 import com.budget.app.model.budgetItem.GetBudgetItemsResponse;
 import com.budget.app.model.budgetItem.MonthlyBudgetOverview;
+import com.budget.app.model.budgetItem.UpdateBudgetItemRequest;
 import com.budget.app.responseMessage.ResponseMessage;
 import com.budget.app.service.BudgetItemService;
 import org.slf4j.Logger;
@@ -96,6 +97,28 @@ public class BudgetItemController {
             logger.error(className + ResponseMessage.GET_MONTHLY_BUDGET_OVERVIEW_FAILURE.toString() + e.getMessage(), e);
             throw e;
         }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @PutMapping("/{budgetId}")
+    public ResponseEntity<Response> updateBudgetItem(@PathVariable("budgetId") int budgetId, @RequestBody UpdateBudgetItemRequest request) throws Exception {
+
+        logger.info(className + ResponseMessage.UPDATE_BUDGET_ITEM_REQUEST.toString());
+
+        Response response = null;
+
+        try {
+            budgetItemService.updateBudgetItem(budgetId, request);
+
+            logger.info(className + ResponseMessage.UPDATE_BUDGET_ITEM_SUCCESS.toString());
+        } catch (Exception e) {
+            logger.error(className + ResponseMessage.UPDATE_BUDGET_ITEM_FAILURE.toString() + e.getMessage(), e);
+            throw e;
+        }
+
+        response = new Response(HttpStatus.OK.value(), ResponseMessage.UPDATE_BUDGET_ITEM_SUCCESS.toString(), LocalDateTime.now());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 

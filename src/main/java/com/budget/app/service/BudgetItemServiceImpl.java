@@ -5,10 +5,7 @@ import com.budget.app.entity.BudgetType;
 import com.budget.app.entity.Category;
 import com.budget.app.entity.User;
 import com.budget.app.exceptions.NotFoundException;
-import com.budget.app.model.budgetItem.AddBudgetItemsRequest;
-import com.budget.app.model.budgetItem.BudgetItemResponse;
-import com.budget.app.model.budgetItem.GetBudgetItemsResponse;
-import com.budget.app.model.budgetItem.MonthlyBudgetOverview;
+import com.budget.app.model.budgetItem.*;
 import com.budget.app.repository.BudgetItemRepository;
 import com.budget.app.repository.BudgetTypeRepository;
 import com.budget.app.repository.CategoryRepository;
@@ -171,5 +168,34 @@ public class BudgetItemServiceImpl implements BudgetItemService {
         }
 
         return monthlyBudgetOverview;
+    }
+
+    @Override
+    public void updateBudgetItem(int budgetId, UpdateBudgetItemRequest updateRequest) throws Exception {
+
+        logger.info(className + ResponseMessage.UPDATE_BUDGET_ITEM_REQUEST.toString() + budgetId);
+
+        try {
+
+            Optional<BudgetItem> budgetItemPresent = budgetItemRepository.findById(budgetId);
+
+            if(!budgetItemPresent.isPresent()) {
+                throw new NotFoundException(ResponseMessage.BUDGET_ITEM_NOT_FOUND.toString());
+            }
+
+            BudgetItem budgetItem = budgetItemPresent.get();
+
+            budgetItem.setAmount(updateRequest.getAmount());
+            budgetItem.setDateOfTransaction(updateRequest.getDateOfTransaction());
+            budgetItem.setDescription(updateRequest.getDescription());
+
+            budgetItemRepository.save(budgetItem);
+
+            logger.info(className + ResponseMessage.UPDATE_BUDGET_ITEM_SUCCESS.toString());
+
+        } catch (Exception e) {
+            logger.error(className + ResponseMessage.UPDATE_BUDGET_ITEM_FAILURE.toString() + e.getMessage(), e);
+            throw e;
+        }
     }
 }
