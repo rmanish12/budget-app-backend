@@ -198,4 +198,31 @@ public class BudgetItemServiceImpl implements BudgetItemService {
             throw e;
         }
     }
+
+    @Override
+    @Transactional
+    public void deleteBudgetItems(List<Integer> id) throws Exception {
+
+        logger.info(className + ResponseMessage.DELETE_BUDGET_ITEM_REQUEST.toString());
+
+        try {
+
+            id
+              .stream()
+              .forEach(item -> {
+                  if(!budgetItemRepository.findById(item).isPresent()) {
+                      throw new NotFoundException(ResponseMessage.BUDGET_ITEM_NOT_FOUND.toString() + " with id: " + item);
+                  }
+              });
+
+            budgetItemRepository.deleteByIdIn(id);
+
+            logger.error(className + ResponseMessage.DELETE_BUDGET_ITEM_SUCCESS.toString());
+
+        } catch (Exception e) {
+            logger.error(className + ResponseMessage.DELETE_BUDGET_ITEM_FAILURE.toString() + e.getMessage(), e);
+            throw e;
+        }
+
+    }
 }

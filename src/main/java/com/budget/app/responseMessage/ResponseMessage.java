@@ -23,6 +23,7 @@ public enum ResponseMessage {
     GET_USER_DETAILS_FAILURE("Error while fetching user details"),
     GET_USER_DETAILS_SUCCESS("Returning user details"),
     OLD_PASSWORD_MISMATCH("Old password does not match"),
+    USER_ALREADY_PRESENT("User already present. Please try again"),
 
     GET_BUDGET_TYPES_REQUEST("Request received for fetching all budget types"),
     GET_BUDGET_TYPES_FAILURE("Error while fetching budget types "),
@@ -34,6 +35,7 @@ public enum ResponseMessage {
     GET_CATEGORIES_REQUEST("Request received for fetching all categories"),
     GET_CATEGORIES_SUCCESS("Returning fetched categories"),
     GET_CATEGORIES_FAILURE("Error while fetching categories "),
+    CATEGORY_NOT_FOUND("No such category found"),
 
     ADD_BUDGET_ITEMS_REQUEST("Request received for adding budget items "),
     ADD_BUDGET_ITEMS_FAILURE("Error while adding budget items "),
@@ -48,27 +50,11 @@ public enum ResponseMessage {
     UPDATE_BUDGET_ITEM_SUCCESS("Budget item updated successfully"),
     UPDATE_BUDGET_ITEM_FAILURE("Error while updating budget items"),
     BUDGET_ITEM_NOT_FOUND("No such budget item found"),
+    DELETE_BUDGET_ITEM_REQUEST("Request received for deleting budget items"),
+    DELETE_BUDGET_ITEM_SUCCESS("Budget items have been successfully deleted"),
+    DELETE_BUDGET_ITEM_FAILURE("Error while deleting budget items"),
 
-    TYPE_NOT_FOUND("No such type found"),
-    CATEGORY_NOT_FOUND("No such category found"),
-    BUDGET_NOT_FOUND("No such budget item found"),
-    USER_ALREADY_PRESENT("User already present. Please try again"),
-    TYPE_ALREADY_PRESENT("The given type is already present"),
-    CATEGORY_ALREADY_PRESENT("The given category is already present"),
-    BUDGET_ALREADY_PRESENT("The given budget item is already present"),
-    SERVER_ERROR("Something went wrong. Please try again"),
-    REGISTERED_SUCCESSFULLY("You have successfully registered with us"),
-    USER_UPDATED_SUCCESSFULLY("User has been updated successfully"),
-    USER_DELETED_SUCCESSFULLY("User has been deleted successfully"),
-    TYPE_ADDED_SUCCESSFULLY("Type has been added successfully"),
-    TYPE_DELETED_SUCCESSFULLY("Type has been deleted successfully"),
-    TYPE_UPDATED_SUCCESSFULLY("Type has been updated successfully"),
-    CATEGORY_ADDED_SUCCESSFULLY("Category has been added successfully"),
-    CATEGORY_DELETED_SUCCESSFULLY("Category has been deleted successfully"),
-    CATEGORY_UPDATED_SUCCESSFULLY("Category has been updated successfully"),
-    BUDGET_ADDED_SUCCESSFULLY("Budget has been added successfully"),
-    BUDGET_DELETED_SUCCESSFULLY("Budget items has been deleted successfully"),
-    BUDGET_UPDATED_SUCCESSFULLY("Budget item has been successfully updated");
+    SERVER_ERROR("Something went wrong. Please try again");
 
     public final String label;
 

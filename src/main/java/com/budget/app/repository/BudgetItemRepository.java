@@ -40,4 +40,7 @@ public interface BudgetItemRepository extends JpaRepository<BudgetItem, Integer>
             " and b.dateOfTransaction between ?2 and ?3" +
             " and b.budgetType.id = ?4")
     int totalAmount(int userId, LocalDate fromDate, LocalDate toDate, int typeId);
+
+    // method for deleting list of items
+    void deleteByIdIn(List<Integer> ids);
 }

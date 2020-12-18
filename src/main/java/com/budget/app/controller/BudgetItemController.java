@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/budget")
@@ -119,6 +120,27 @@ public class BudgetItemController {
         }
 
         response = new Response(HttpStatus.OK.value(), ResponseMessage.UPDATE_BUDGET_ITEM_SUCCESS.toString(), LocalDateTime.now());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Response> deleteBudgetItems(@RequestParam("id") List<Integer> id) throws Exception {
+
+        logger.info(className + ResponseMessage.DELETE_BUDGET_ITEM_REQUEST.toString());
+        Response response = null;
+
+        try {
+            budgetItemService.deleteBudgetItems(id);
+
+            logger.info(className + ResponseMessage.DELETE_BUDGET_ITEM_SUCCESS.toString());
+        } catch (Exception e) {
+            logger.error(className + ResponseMessage.DELETE_BUDGET_ITEM_FAILURE.toString() + e.getMessage(), e);
+            throw e;
+        }
+
+        response = new Response(HttpStatus.OK.value(), ResponseMessage.DELETE_BUDGET_ITEM_SUCCESS.toString(), LocalDateTime.now());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 
