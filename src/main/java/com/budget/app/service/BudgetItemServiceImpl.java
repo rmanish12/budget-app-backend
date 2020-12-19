@@ -61,7 +61,7 @@ public class BudgetItemServiceImpl implements BudgetItemService {
             // checking if the user is present
             // else throwing NotFoundException
             if(!userPresent.isPresent()) {
-                throw new NotFoundException(ResponseMessage.USER_NOT_FOUND.toString());
+                throw new NotFoundException(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString());
             }
 
             request
