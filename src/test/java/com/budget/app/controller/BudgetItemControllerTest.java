@@ -4,6 +4,8 @@ import com.budget.app.exceptions.NotFoundException;
 import com.budget.app.model.Response;
 import com.budget.app.model.budgetItem.AddBudgetItemsRequest;
 import com.budget.app.model.budgetItem.BudgetItemRequest;
+import com.budget.app.model.budgetItem.BudgetItemResponse;
+import com.budget.app.model.budgetItem.GetBudgetItemsResponse;
 import com.budget.app.responseMessage.ResponseMessage;
 import com.budget.app.service.BudgetItemService;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -187,6 +189,58 @@ public class BudgetItemControllerTest {
         int status = mvcResult.getResponse().getStatus();
 
         Response expectedResponse = new Response(HttpStatus.NOT_FOUND.value(), ResponseMessage.CATEGORY_NOT_FOUND.toString(), LocalDateTime.now());
+        Response actualResponse = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);
+        Assertions.assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
+        Assertions.assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
+
+    }
+
+    @Test
+    public void getBudgetItemsTest() throws Exception {
+
+        GetBudgetItemsResponse expectedResponse = new GetBudgetItemsResponse("income", 2, Arrays.asList(
+                new BudgetItemResponse(1, 10000, "Monthly Salary", LocalDate.parse("2020-12-01"), "Salary"),
+                new BudgetItemResponse(2, 5000, "Bonus", LocalDate.parse("2020-12-02"), "Salary")
+        ));
+
+        Mockito
+                .when(budgetItemService.getBudgetItems(Mockito.anyInt(), Mockito.any(), Mockito.any(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt()))
+                .thenReturn(expectedResponse);
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.get("/budget/1?fromDate=2020-12-01&toDate=2020-12-30&type=income&sortBy=amount&orderBy=desc&page=0&limit=5")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+
+        GetBudgetItemsResponse actualResponse = mapFromJson(mvcResult.getResponse().getContentAsString(), GetBudgetItemsResponse.class);
+
+        Assertions.assertEquals(HttpStatus.OK.value(), status);
+        Assertions.assertEquals(expectedResponse.getBudgetType(), actualResponse.getBudgetType());
+        Assertions.assertEquals(expectedResponse.getTotalCount(), actualResponse.getTotalCount());
+//        Assertions.assertEquals(expectedResponse.getBudgetType(), actualResponse.getBudgetType());
+
+    }
+
+    @Test
+    public void getBudgetItemsWithIncorrectUserIdTest() throws Exception {
+
+        Mockito
+                .doThrow(new NotFoundException(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString()))
+                .when(budgetItemService)
+                .getBudgetItems(Mockito.anyInt(), Mockito.any(), Mockito.any(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.get("/budget/1?fromDate=2020-12-01&toDate=2020-12-30&type=income&sortBy=amount&orderBy=desc&page=0&limit=5")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+
+        Response expectedResponse = new Response(HttpStatus.NOT_FOUND.value(), ResponseMessage.USER_WITH_ID_NOT_FOUND.toString(), LocalDateTime.now());
         Response actualResponse = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
 
         Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);

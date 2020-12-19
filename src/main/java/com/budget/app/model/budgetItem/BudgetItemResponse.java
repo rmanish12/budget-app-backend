@@ -10,6 +10,9 @@ public class BudgetItemResponse {
     private LocalDate dateOfTransaction;
     private String category;
 
+    public BudgetItemResponse() {
+    }
+
     public BudgetItemResponse(int id, float amount, String description, LocalDate dateOfTransaction, String category) {
         this.id = id;
         this.amount = amount;
