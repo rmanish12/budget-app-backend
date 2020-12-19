@@ -13,6 +13,7 @@ import com.budget.app.repository.UserRepository;
 import com.budget.app.responseMessage.ResponseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.AopInvocationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -114,6 +115,10 @@ public class BudgetItemServiceImpl implements BudgetItemService {
 
         try {
 
+            if (!userRepository.findById(userId).isPresent()) {
+                throw new NotFoundException(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString());
+            }
+
             Pageable pageable = PageRequest.of(page, limit, orderBy.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
 
             List<BudgetItemResponse> budgetItems = budgetItemRepository.getBudgetItems(userId, startDate, endDate, type.toUpperCase(), pageable);
@@ -144,6 +149,10 @@ public class BudgetItemServiceImpl implements BudgetItemService {
 
         try {
 
+            if (!userRepository.findById(userId).isPresent()) {
+                throw new NotFoundException(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString());
+            }
+
             LocalDate currentDate = LocalDate.now();
             LocalDate startDate = currentDate.withDayOfMonth(1);
             LocalDate endDate = currentDate.withDayOfMonth(currentDate.lengthOfMonth());
@@ -162,6 +171,17 @@ public class BudgetItemServiceImpl implements BudgetItemService {
 
             logger.info(className + ResponseMessage.GET_MONTHLY_BUDGET_OVERVIEW_SUCCESS.toString());
 
+        }  catch (AopInvocationException e) {
+
+            // this exception is thrown when there are no budget items for a given user
+            // so budgetItemRepository.totalAmount(...) is expected to return an int value but returns null
+            // in this case we return all values set as 0
+            monthlyBudgetOverview = new MonthlyBudgetOverview();
+            monthlyBudgetOverview.setIncome(0);
+            monthlyBudgetOverview.setExpense(0);
+            monthlyBudgetOverview.setTotal(0);
+
+            logger.info(className + ResponseMessage.GET_MONTHLY_BUDGET_OVERVIEW_SUCCESS.toString());
         } catch (Exception e) {
             logger.error(className + ResponseMessage.GET_MONTHLY_BUDGET_OVERVIEW_FAILURE.toString() + e.getMessage(), e);
             throw e;
