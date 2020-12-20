@@ -362,4 +362,54 @@ public class BudgetItemControllerTest {
         Assertions.assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
 
     }
+
+    @Test
+    public void deleteBudgetItemsTest() throws Exception {
+
+        Response expectedResponse = new Response(HttpStatus.OK.value(), ResponseMessage.DELETE_BUDGET_ITEM_SUCCESS.toString(), LocalDateTime.now());
+
+        Mockito
+                .doNothing()
+                .when(budgetItemService)
+                .deleteBudgetItems(Mockito.anyList());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.delete("/budget?id=1,2,3")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+
+        Response actualResponse = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.OK.value(), status);
+        Assertions.assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
+        Assertions.assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
+
+    }
+
+    @Test
+    public void deleteBudgetItemsWithIncorrectBudgetIdTest() throws Exception {
+
+        Response expectedResponse = new Response(HttpStatus.NOT_FOUND.value(), ResponseMessage.BUDGET_ITEM_NOT_FOUND.toString(), LocalDateTime.now());
+
+        Mockito
+                .doThrow(new NotFoundException(ResponseMessage.BUDGET_ITEM_NOT_FOUND.toString()))
+                .when(budgetItemService)
+                .deleteBudgetItems(Mockito.anyList());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.delete("/budget?id=1,2,3")
+                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+
+        Response actualResponse = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);
+        Assertions.assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
+        Assertions.assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
+
+    }
 }
