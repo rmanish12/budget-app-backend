@@ -299,4 +299,67 @@ public class BudgetItemControllerTest {
 
     }
 
+    @Test
+    public void updateBudgetItemTest() throws Exception {
+
+        UpdateBudgetItemRequest request = new UpdateBudgetItemRequest();
+        request.setAmount(1000);
+        request.setDescription("Updating budget item");
+        request.setDateOfTransaction(LocalDate.now());
+
+        Response expectedResponse = new Response(HttpStatus.OK.value(), ResponseMessage.UPDATE_BUDGET_ITEM_SUCCESS.toString(), LocalDateTime.now());
+
+        Mockito
+                .doNothing()
+                .when(budgetItemService)
+                .updateBudgetItem(Mockito.anyInt(), Mockito.any());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.put("/budget/1")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+
+        Response actualResponse = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.OK.value(), status);
+        Assertions.assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
+        Assertions.assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
+
+    }
+
+    @Test
+    public void updateBudgetItemWithIncorrectUserIdTest() throws Exception {
+
+        UpdateBudgetItemRequest request = new UpdateBudgetItemRequest();
+        request.setAmount(1000);
+        request.setDescription("Updating budget item");
+        request.setDateOfTransaction(LocalDate.now());
+
+        Response expectedResponse = new Response(HttpStatus.NOT_FOUND.value(), ResponseMessage.USER_WITH_ID_NOT_FOUND.toString(), LocalDateTime.now());
+
+        Mockito
+                .doThrow(new NotFoundException(ResponseMessage.USER_WITH_ID_NOT_FOUND.toString()))
+                .when(budgetItemService)
+                .updateBudgetItem(Mockito.anyInt(), Mockito.any());
+
+        MvcResult mvcResult = mockMvc
+                .perform(MockMvcRequestBuilders.put("/budget/1")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapToJson(request)))
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+
+        Response actualResponse = mapFromJson(mvcResult.getResponse().getContentAsString(), Response.class);
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);
+        Assertions.assertEquals(expectedResponse.getMessage(), actualResponse.getMessage());
+        Assertions.assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
+
+    }
 }
