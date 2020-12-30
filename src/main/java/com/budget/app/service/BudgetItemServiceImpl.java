@@ -70,14 +70,14 @@ public class BudgetItemServiceImpl implements BudgetItemService {
                     .forEach(item -> {
 
                         // extracting budget type optional from each budget item
-                        Optional<BudgetType> budgetType = budgetTypeRepository.findById(item.getTypeId());
+                        Optional<BudgetType> budgetType = budgetTypeRepository.findById(item.getType());
 
                         if(!budgetType.isPresent()) {
                             throw new NotFoundException(ResponseMessage.BUDGET_TYPE_NOT_FOUND.toString());
                         }
 
                         // extracting category type optional from each category item
-                        Optional<Category> category = categoryRepository.findById(item.getCategoryId());
+                        Optional<Category> category = categoryRepository.findById(item.getCategory());
 
                         if(!category.isPresent()) {
                             throw new NotFoundException(ResponseMessage.CATEGORY_NOT_FOUND.toString());

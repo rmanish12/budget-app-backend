@@ -4,29 +4,26 @@ import java.time.LocalDate;
 
 public class BudgetItemRequest {
 
-    private int typeId;
-    private int categoryId;
+    private int type;
+    private int category;
     private float amount;
     private String description;
     private LocalDate dateOfTransaction;
 
-    public BudgetItemRequest() {
-    }
-
-    public BudgetItemRequest(int typeId, int categoryId, float amount, String description, LocalDate dateOfTransaction) {
-        this.typeId = typeId;
-        this.categoryId = categoryId;
+    public BudgetItemRequest(int type, int category, float amount, String description, LocalDate dateOfTransaction) {
+        this.type = type;
+        this.category = category;
         this.amount = amount;
         this.description = description;
         this.dateOfTransaction = dateOfTransaction;
     }
 
-    public int getTypeId() {
-        return typeId;
+    public int getType() {
+        return type;
     }
 
-    public int getCategoryId() {
-        return categoryId;
+    public int getCategory() {
+        return category;
     }
 
     public float getAmount() {
@@ -44,8 +41,8 @@ public class BudgetItemRequest {
     @Override
     public String toString() {
         return "BudgetItemRequest{" +
-                "typeId=" + typeId +
-                ", categoryId=" + categoryId +
+                "type=" + type +
+                ", category=" + category +
                 ", amount=" + amount +
                 ", description='" + description + '\'' +
                 ", dateOfTransaction=" + dateOfTransaction +

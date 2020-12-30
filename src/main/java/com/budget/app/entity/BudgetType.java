@@ -1,5 +1,7 @@
 package com.budget.app.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ public class BudgetType {
     @Column(nullable = false, length = 20)
     private String type;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "type_id")
     private List<Category> categories;
